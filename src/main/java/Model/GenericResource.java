@@ -117,7 +117,6 @@ public class GenericResource {
         ResultSet rslt = null;
         
         try {
-            //myConn = DriverManager.getConnection(con+conplus, user, pass);
             myStmt = myConn.createStatement();
             rslt = myStmt.executeQuery(search);
             
