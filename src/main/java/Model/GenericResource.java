@@ -28,8 +28,7 @@ public class GenericResource {
 
     static final Logger logger = Logger.getLogger(GenericResource.class);
     
-    Connection conn;
-    ResultSet rslt;
+    
     
     /*
     @GET
@@ -91,6 +90,10 @@ public class GenericResource {
     }
     */
     
+    DBConnection dbCon;
+    Connection conn;
+    ResultSet rslt;
+    
     @GET
     @Path("testJNDI")
     @Produces(MediaType.APPLICATION_JSON) 
@@ -111,18 +114,11 @@ public class GenericResource {
         }
         System.out.println("SEARCH QUERY IS: " + search);
         
-        Context initCtx = new InitialContext();
-        Context envCtx = (Context) initCtx.lookup("java:comp/env");
-        DataSource ds = (DataSource) envCtx.lookup("jdbc/OF_DB");
-        Connection myConn = ds.getConnection();
+        dbCon = new DBConnection();
+        try{
+            conn = DBConnection.setDBConnection();
+            rslt = dbCon.getResultSet(search, conn);
         
-        Statement myStmt = null;
-        ResultSet rslt = null;
-        
-        try {
-            myStmt = myConn.createStatement();
-            rslt = myStmt.executeQuery(search);
-            
             while (rslt.next()) {
                 Ofentete ofentete = new Ofentete();
                 
@@ -252,26 +248,17 @@ public class GenericResource {
                 System.out.println("Ofentete list is : " + list.toString());
                 System.out.println("******************");
             }
-
         } catch (Exception exc) {
             exc.printStackTrace();
         } finally {
-            if (rslt != null) {
-                rslt.close();
-            }
-
-            if (myStmt != null) {
-                myStmt.close();
-            }
-
-            if (myConn != null) {
-                myConn.close();
+            if (conn != null) {
+                conn.close();
             }
         }
-        
         GenericEntity generic = new GenericEntity<List<Of>>(list){};
         
         return Response.status(201).entity(generic).build();
+        
     }
     
     
