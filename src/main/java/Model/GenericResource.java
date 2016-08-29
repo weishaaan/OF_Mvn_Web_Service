@@ -94,20 +94,20 @@ public class GenericResource {
     @GET
     @Path("testJNDI")
     @Produces(MediaType.APPLICATION_JSON) 
-    public Response test (@QueryParam("ref") long ref,
-                          @QueryParam("sref") String sref,
+    public Response test (@QueryParam("REFERENCE") long ref,
+                          @QueryParam("SREFERENCE1") String sref,
                           @QueryParam("date_start") String date_start,
                           @QueryParam("date_end") String date_end)throws SQLException, NamingException {
         
         
         List<Of> list = new ArrayList<>();
         
-        String search = "SELECT * FROM OF_list WHERE reference = " + ref ; 
+        String search = "SELECT * FROM ofentete WHERE REFERENCE = \'" + ref + "\'"; 
         if(sref != null && !sref.equals("")){
-            search = search + " AND sReference = " + sref;
+            search = search + " AND SREFERENCE1 = \'" + sref + "\'";
         }
         if(date_start!=null && !date_start.equals("") && date_end!=null && !date_end.equals("")){
-            search = search + " AND datePlainfDebut BETWEEN " + date_start + " AND " + date_end;
+            search = search + " AND PREVDEBDT BETWEEN " + date_start + " AND " + date_end;
         }
         System.out.println("SEARCH QUERY IS: " + search);
         
@@ -246,7 +246,7 @@ public class GenericResource {
                 //of.setArtDesignation(rslt.getString("PIECENO"));
                 //of.setNbArtPerContainer(rslt.getString("PIECENO"));
                 of.setQteOfEntete(rslt.getInt("QTE_OF_ENTETE"));
-                of.setDatePlainfDebut(rslt.getString("PREVDEBD"));
+                of.setDatePlainfDebut(rslt.getString("PREVDEBDT"));
                 
                 list.add(of);
                 System.out.println("Ofentete list is : " + list.toString());
